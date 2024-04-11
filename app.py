@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import base64
+from openpyxl import load_workbook
 
 # Function to download data as CSV
 def download_data(data):
@@ -19,14 +20,17 @@ def main():
     if uploaded_file is not None:
         # Read Excel file
         try:
-            df = pd.read_excel(uploaded_file, sheet_name='All members')
+            workbook = load_workbook(uploaded_file)
+            sheet = workbook['All members']
+            data = sheet.values
+            columns = next(data)
+            df = pd.DataFrame(data, columns=columns)
         except Exception as e:
             st.error(f"An error occurred while reading the Excel file: {e}")
             return
 
         # Set title and logo
         st.title("Tech Sisters")
-        #st.image('https://raw.githubusercontent.com/ElizabethWaithera/Tech_sisters/main/Tech%20Sisters.jpg', width=200)  # Using the raw URL of the logo image
 
         # Sidebar filters
         st.sidebar.title('Filters')
